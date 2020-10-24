@@ -1,246 +1,238 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# # Mission to Mars
-
-# ## Step 1 - Scraping
-
-# ### NASA Mars News
-
-# In[1]:
-
-
-pip install BeautifulSoup4
-
-
-# In[2]:
-
-
 # Dependencies
 from splinter import Browser
 from bs4 import BeautifulSoup as bs
 import pandas as pd
 import requests
-import pymongo
-from flask import Flask, render_template, redirect
-from flask_pymongo import PyMongo
+#import pymongo
+#from flask import Flask, render_template, redirect
+#from flask_pymongo import PyMongo
 
 
 # In[3]:
+#from splinter import Browser
+#from bs4 import BeautifulSoup
 
 
-executable_path = {'executable_path': 'chromedriver.exe'}
-browser = Browser('chrome', **executable_path, headless=False)
+def init_browser():
+    # @NOTE: Replace the path with your actual path to the chromedriver
+    executable_path = {"executable_path": "chromedriver.exe"}
+    return Browser("chrome", **executable_path, headless=False)
 
 
-# In[4]:
+def scrape():
+    browser = init_browser()
+   
 
+    executable_path = {'executable_path': 'chromedriver.exe'}
+    browser = Browser('chrome', **executable_path, headless=False)
 
-# Visit Nasa news url through splinter module
-url = "https://mars.nasa.gov/news/"
-browser.visit(url)
 
+    # In[4]:
 
-# In[5]:
 
+    # Visit Nasa news url through splinter module
+    url = "https://mars.nasa.gov/news/"
+    browser.visit(url)
 
-# HTML Object
-html = browser.html
 
-# Parse HTML with Beautiful Soup
-soup = bs(html, 'html.parser')
+    # In[5]:
 
 
-# In[6]:
+    # HTML Object
+    html = browser.html
 
+    # Parse HTML with Beautiful Soup
+    soup = bs(html, 'html.parser')
 
-# Retrieve the latest news title and paragraph
-news_title = soup.find_all('div', class_='content_title')[0].text
-news_p = soup.find_all('div', class_='article_teaser_body')[0].text
 
-# Display scrapped data 
-print(news_title)
-print("--------------------------------------------------------------------")
-print(news_p)
+    # In[6]:
 
 
-# ## JPL Mars Space Images - Featured Image
+    # Retrieve the latest news title and paragraph
+    news_title = soup.find_all('div', class_='content_title')[0].text
+    news_p = soup.find_all('div', class_='article_teaser_body')[0].text
 
-# In[7]:
+    # Display scrapped data 
+    print(news_title)
+    print("--------------------------------------------------------------------")
+    print(news_p)
 
 
-# Mars Image to be scraped
-jpl_nasa_url = 'https://www.jpl.nasa.gov'
-images_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
+    # ## JPL Mars Space Images - Featured Image
 
+    # In[7]:
 
-# In[8]:
 
+    # Mars Image to be scraped
+    jpl_nasa_url = 'https://www.jpl.nasa.gov'
+    images_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
 
-browser.visit(images_url)
-html = browser.html
 
+    # In[8]:
 
-# In[9]:
 
+    browser.visit(images_url)
+    html = browser.html
 
-images_soup = bs(html, 'html.parser')
 
+    # In[9]:
 
-# In[10]:
 
+    images_soup = bs(html, 'html.parser')
 
-# Retrieve featured image link
-relative_image_path = images_soup.find_all('img')[3]["src"]
-featured_image_url = jpl_nasa_url + relative_image_path
-print(featured_image_url)
 
+    # In[10]:
 
-# ## Mars Facts
 
-# In[11]:
+    # Retrieve featured image link
+    relative_image_path = images_soup.find_all('img')[3]["src"]
+    featured_image_url = jpl_nasa_url + relative_image_path
+    print(featured_image_url)
 
 
-url = "https://space-facts.com/mars/"
-browser.visit(url)
+    # ## Mars Facts
 
+    # In[11]:
 
-# In[12]:
 
+    url = "https://space-facts.com/mars/"
+    browser.visit(url)
 
-# Use Pandas to "read_html" to parse the URL
-tables = pd.read_html(url)
 
+    # In[12]:
 
-# In[13]:
 
+    # Use Pandas to "read_html" to parse the URL
+    tables = pd.read_html(url)
 
-#Find Mars Facts DataFrame in the lists of DataFrames
-df = tables[1]
 
+    # In[13]:
 
-# In[14]:
 
+    #Find Mars Facts DataFrame in the lists of DataFrames
+    #df = tables[0]
 
-#Assign the columns
-df.columns = ['Mar_Earth_Comparision', 'Mars', 'Earth']
-html_table = df.to_html(table_id="html_tbl_css",justify='left',index=False)
-data = df.to_dict(orient='records')  # Here's our added param..
-df
 
+    # In[14]:
 
-# In[15]:
 
+    #Assign the columns
+    #df.columns = ['Mar_Earth_Comparision', 'Mars', 'Earth']
+    #html_table = df.to_html(table_id="html_tbl_css",justify='left',index=False)
+    #data = df.to_dict(orient='records')  # Here's our added param..
+    #df
 
-#Find Mars Facts DataFrame in the lists of DataFrames
-df_1 = tables[0]
 
+    # In[15]:
 
-# In[16]:
 
+    #Find Mars Facts DataFrame in the lists of DataFrames
+    df_1 = tables[0]
 
-#Assign the columns
-df_1.columns = ['Attributes', 'Values']
-html_table = df_1.to_html(table_id="html_tbl_css",justify='left',index=False)
-data = df_1.to_dict(orient='records')  # Here's our added param..
-df_1
 
+    # In[16]:
 
-# In[17]:
 
+    #Assign the columns
+    df_1.columns = ['Attributes', 'Values']
+    html_table = df_1.to_html(table_id="html_tbl_css",justify='left',index=False)
+    #data = df_1.to_dict(orient='records')  # Here's our added param..
+    #df_1
 
-# Use Pandas to convert the data to a HTML table string
-table_one = df.to_html()
 
+    # In[17]:
 
-# In[18]:
 
+    # Use Pandas to convert the data to a HTML table string
+    #table_one = df.to_html()
 
-# Use Pandas to convert the data to a HTML table string
-table_two = df_1.to_html()
 
+    # In[18]:
 
-# In[19]:
 
+    # Use Pandas to convert the data to a HTML table string
+    #table_two = df_1.to_html()
 
-# printing table_one 
-print(table_one)
 
+    # In[19]:
 
-# In[20]:
 
+    # printing table_one 
+    #print(table_one)
 
-# printing table_one 
-print(table_two)
 
+    # In[20]:
 
-# ## Mars Hemisphere
 
-# In[21]:
+    # printing table_one 
+    #print(table_two)
 
 
-#Visit the Mars Hemispheres url through splinter module
-url='https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
-browser.visit(url)
+    # ## Mars Hemisphere
 
+    # In[21]:
 
-# In[22]:
 
+    #Visit the Mars Hemispheres url through splinter module
+    url='https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    browser.visit(url)
 
-#Parse with 'html.parser';creation with beautifulsoup object
-html_hemispheres = browser.html
-soup = bs(html_hemispheres, 'html.parser')
 
+    # In[22]:
 
-# In[24]:
 
-
-#Create an empty list of links for the hemispheres
-hemisphere_image_urls=[]
-products=soup.find ('div', class_='result-list')
-hemispheres=products.find_all('div',{'class':'item'})
-
-for hemisphere in hemispheres:
-    title = hemisphere.find("h3").text
-    title = title.replace("Enhanced", "")
-    end_link = hemisphere.find("a")["href"]
-    image_link = "https://astrogeology.usgs.gov/" + end_link    
-    browser.visit(image_link)
+    #Parse with 'html.parser';creation with beautifulsoup object
     html_hemispheres = browser.html
-    soup = bs(html_hemispheres, "html.parser")
-    downloads = soup.find("div", class_="downloads")
-    image_url = downloads.find("a")["href"]
-    hemisphere_image_urls.append({"title": title, "img_url": image_url})
+    soup = bs(html_hemispheres, 'html.parser')
 
 
-# In[25]:
+    # In[24]:
 
 
-#Display hemisphere image urls
-hemisphere_image_urls
+    #Create an empty list of links for the hemispheres
+    hemisphere_image_urls=[]
+    products=soup.find ('div', class_='result-list')
+    hemispheres=products.find_all('div',{'class':'item'})
+
+    for hemisphere in hemispheres:
+        title = hemisphere.find("h3").text
+        title = title.replace("Enhanced", "")
+        end_link = hemisphere.find("a")["href"]
+        image_link = "https://astrogeology.usgs.gov/" + end_link    
+        browser.visit(image_link)
+        html_hemispheres = browser.html
+        soup = bs(html_hemispheres, "html.parser")
+        downloads = soup.find("div", class_="downloads")
+        image_url = downloads.find("a")["href"]
+        hemisphere_image_urls.append({"title": title, "img_url": image_url})
 
 
-# In[26]:
+    # In[25]:
 
 
-mars_dict = {
+    #Display hemisphere image urls
+    hemisphere_image_urls
+
+
+    # In[26]:
+
+
+    mars_dict = {
         "news_title": news_title,
         "news_p": news_p,
         "featured_image_url": featured_image_url,
-        "fact_table": table_two,
-        "comparison_table": table_one,
+        "fact_table": html_table,
+        #"comparison_table": table_one,
         "hemisphere_images": hemisphere_image_urls
     }
 
 
-# In[27]:
+    # In[27]:
 
 
-mars_dict
+    return mars_dict
 
 
-# In[ ]:
-
-
+# In
 
 
