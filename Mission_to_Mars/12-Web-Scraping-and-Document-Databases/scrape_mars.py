@@ -23,8 +23,8 @@ def scrape():
     browser = init_browser()
    
 
-    executable_path = {'executable_path': 'chromedriver.exe'}
-    browser = Browser('chrome', **executable_path, headless=False)
+ #   executable_path = {'executable_path': 'chromedriver.exe'}
+ #   browser = Browser('chrome', **executable_path, headless=False)
 
 
     # In[4]:
@@ -135,7 +135,7 @@ def scrape():
 
     #Assign the columns
     df_1.columns = ['Attributes', 'Values']
-    html_table = df_1.to_html(table_id="html_tbl_css",justify='left',index=False)
+    html_table = df_1.to_html(index=False, classes="table table-striped") 
     #data = df_1.to_dict(orient='records')  # Here's our added param..
     #df_1
 
